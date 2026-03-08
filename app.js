@@ -5,9 +5,7 @@ const PORT = 3000;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-
-const mongoURI = 'mongodb://jitter_test:WdnrTLhfwEEzAgWM@cluster0.16ujbyd.mongodb.net/?appName=Cluster0';
-//const options = { reconnectTries: Number.MAX_VALUE, reconnectInterval: 500, poolSize: 5, useNewUrlParser: true };
+const mongoURI = "AQUI VAI A STRING DE CONEXAO DO BANCO";
 
 mongoose.connect(mongoURI);
 

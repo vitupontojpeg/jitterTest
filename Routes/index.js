@@ -22,9 +22,9 @@ router.post('/order', (req, res) => {
 // 2. GET: Listar todos os pedidos.
 router.get('/order/list', (req, res) => {
 	try {
-		const pedidos = await Order.find();
-		res.status(200).json(pedidos);
-		
+		const orders = await Order.find();
+		res.status(200).json(orders);
+
 	} catch (error) {
         res.status(500).json({ 
             mensagem: "Erro ao buscar a lista de pedidos", 
@@ -45,15 +45,13 @@ router.get('/order/:id', (req, res) => {
             });
         }
 
-        res.status(200).json(pedido);
+        res.status(200).json(order);
 	} catch (error) {
         res.status(500).json({ 
             mensagem: "Erro ao buscar pedido. Verifique se o ID está correto.", 
             erro: error.message 
         });
     }
-    
-    
 });
 
 // 4. PUT: Atualizar um pedido existente.
