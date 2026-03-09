@@ -6,17 +6,26 @@ const Order = require('../db_conn');
 router.post('/order', (req, res) => {
 	const { orderId, value, items } = req.body;
 
-	if (!orderId || !value || !items) return res.send({ error: 'Dados insuficientes'});
+	try{
+		if (!orderId || !value || !items) return res.send({ error: 'Dados insuficientes'});
 
-   	Order.create({
-   		orderId: orderId,
-   		value: value,
-   		items: [
-   			{ productId: items[0], quantity: items[1], price: items[2]}
-   		]});
+	   	Order.create({
+	   		orderId: orderId,
+	   		value: value,
+	   		items: [
+	   			{ productId: items[0], quantity: items[1], price: items[2]}
+	   		]});
 
-   	const data = Order.findOne({ orderId: orderId });
-   	return res.send(data);
+	   	const data = Order.findOne({ orderId: orderId });
+	   	return res.send(data);
+
+	   } catch {
+	   		res.status().json({
+	   			mensagem: "Erro na criacao do pedido",
+	   			erro: error.message
+	   		});
+	   }
+	
 });
 
 // 2. GET: Listar todos os pedidos.
@@ -57,12 +66,34 @@ router.get('/order/:id', (req, res) => {
 // 4. PUT: Atualizar um pedido existente.
 router.put('/order/:id', (req, res) => {
 	try {
-		const orderId = req.params.id;
-		
-		// Nao sei ainda	
-	}
-    
-    Order.updateOne({ orderId: orderId });
+        const id = req.params.id;
+        const orderDataUpdate = req.body;
+
+        // O segredo está nas opções: { new: true }
+        const updatedOrder = await Order.findByIdAndUpdate(
+            id, 
+            orderDataUpdate, 
+            { 
+                new: true,           // Retorna o objeto JÁ ATUALIZADO (sem isso, retorna o antigo)
+                runValidators: true  // Garante que os novos dados sigam as regras do seu Schema
+            }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ mensagem: "Pedido não encontrado para atualização." });
+        }
+
+        res.status(200).json({
+            mensagem: "Pedido atualizado com sucesso!",
+            dados: updatedOrder
+        });
+
+    } catch (error) {
+        res.status(500).json({ 
+            mensagem: "Erro ao atualizar o pedido", 
+            erro: error.message 
+        });
+    }
 });
 
 // 5. DELETE: Remover um pedido.
